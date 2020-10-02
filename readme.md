@@ -1,4 +1,4 @@
-##daily-coding-problem
+##Daily-coding-problem
 
 based on problems from [Daily Coding Problem](https://www.dailycodingproblem.com/)
 
