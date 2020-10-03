@@ -1,38 +1,61 @@
+import json
+
+
 class Node:
-    def __init__(self, val, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+    def __repr__(self):
+        return str(self.data)
 
 
-def serialize(tree):
-    values = []
+def serialize(root):
+    if not root:
+        return None
 
-    def serializer(node):
-        if not node:
-            values.append('x')
-        else:
-            values.append(str(node.val))
-            serializer(node.left)
-            serializer(node.right)
+    serialized_tree_map = dict()
+    serialized_left = serialize(root.left)
+    serialized_right = serialize(root.right)
 
-    serializer(tree)
+    serialized_tree_map['data'] = root.data
+    if serialized_left:
+        serialized_tree_map['left'] = serialized_left
+    if serialized_right:
+        serialized_tree_map['right'] = serialized_right
 
-    return ' '.join(values)
+    return json.dumps(serialized_tree_map)
 
 
-def deserialize(serialized_string):
-    elements = iter(serialized_string.split(' '))
+def deserialize(s):
+    serialized_tree_map = json.loads(s)
 
-    def deserializer():
-        element = next(elements)
+    node = Node(serialized_tree_map['data'])
+    if 'left' in serialized_tree_map:
+        node.left = deserialize(serialized_tree_map['left'])
+    if 'right' in serialized_tree_map:
+        node.right = deserialize(serialized_tree_map['right'])
 
-        if element == 'x':
-            return None
-        else:
-            node = Node(element)
-            node.left = deserializer()
-            node.right = deserializer()
-            return node
+    return node
 
-    return deserializer()
+
+node_a = Node('a')
+node_b = Node('b')
+node_c = Node('c')
+node_d = Node('d')
+node_e = Node('e')
+node_f = Node('f')
+node_g = Node('g')
+node_a.left = node_b
+node_a.right = node_c
+node_b.left = node_d
+node_b.right = node_e
+node_c.left = node_f
+node_c.right = node_g
+
+serialized_a = serialize(node_a)
+print(serialized_a)
+
+deserialized_a = deserialize(serialized_a)
+assert str(deserialized_a) == "a"
